@@ -19,9 +19,12 @@ def list_sources():
 link = links["Verge"]
 print(link)
 def parse_single(url):
-    news = feedparser.parse(link)
-    for i in range(len(news.entries)):
-        print(f"Title: {news.entries[i].title}\n Link: {news.entries[i].link}")
+    try:
+        news = feedparser.parse(url)
+        for i in range(len(news.entries)):
+            print(f"Title: {news.entries[i].title}\n Link: {news.entries[i].link}")
+    except:
+        print(f"Error resolving feed: {url}")
 
 parse_single(link)
 """
