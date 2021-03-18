@@ -1,6 +1,7 @@
 #import discord
 import os
 import feedparser
+import re
 
 links = {"Wired"          : "https://www.wired.com/feed/category/gear/latest/rss",
          "Verge"      : "https://www.theverge.com/rss/index.xml",
@@ -17,7 +18,7 @@ def list_sources():
         print(x)
 
 link = links["Verge"]
-print(link)
+#print(link)
 def parse_single(url):
     try:
         news = feedparser.parse(url)
@@ -26,7 +27,24 @@ def parse_single(url):
     except:
         print(f"Error resolving feed: {url}")
 
-parse_single(link)
+#parse_single(link)
+
+def search_term(message):
+    try:
+        match = re.fullmatch('newsbot.single\((["|\'])([^\)]+)(["|\'])\)', message)
+        if match.group(1) != match.group(3):
+            return False
+        for check in re.finditer(match.group(1), match.group(2)):
+            if match.group(2)[check.start()-1] != '\\':
+                return False
+        return match.group(2)
+    except:
+        return False
+
+istr = 'newsbot.single("Hello")'
+
+search_term(message=istr)
+
 """
 client = discord.Client()
 bot_token = os.getenv("newsbot")
