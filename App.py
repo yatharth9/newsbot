@@ -2,9 +2,16 @@
 import os
 import feedparser
 import re
+import discord
+
+commandslist = """```py
+
+newsbot.single("Term"): Returns the news feed for the term
+newsbot.sources() : Returns the sources currently being resolved```
+"""
 
 links = {"Wired"          : "https://www.wired.com/feed/category/gear/latest/rss",
-         "Verge"      : "https://www.theverge.com/rss/index.xml",
+         "Verge"          : "https://www.theverge.com/rss/index.xml",
          "Techmeme"       : "https://www.techmeme.com/feed.xml",
          "Techcrunch"     : "https://techcrunch.com/tag/rss/",
          "Pc world"       : "https://www.pcworld.com/index.rss",
@@ -13,9 +20,9 @@ links = {"Wired"          : "https://www.wired.com/feed/category/gear/latest/rss
          "Cnet"           : "https://www.cnet.com/rss/news/"}
 
 def list_sources():
-    print("The Sources are ")
+    sources =[]
     for x in links:
-        print(x)
+        sources.append(x)
 
 link = links["Verge"]
 #print(link)
@@ -44,12 +51,23 @@ def search_term(message):
 istr = 'newsbot.single("Hello")'
 
 search_term(message=istr)
+intents = discord.Intents.default()
 
-"""
-client = discord.Client()
+client = discord.Client(intents=intents)
 bot_token = os.getenv("newsbot")
 
 @client.event
-async def startup():
+async def on_ready():
     print(f"News bot online ")
-"""
+    await client.change_presence(status = discord.Status.online, activity = discord.Game('help(newsbot)'))
+
+@client.event
+async def on_message(message):
+    if "help(newsbot)" == message.content.lower() or "newsbot.commands()" == message.content.lower():
+        await message.channel.send(commandslist)
+    
+    elif "newsbot.close()" == message.content.lower:
+        await client.close()
+        print(f"Bot shutting down\n")
+
+client.run(bot_token, reconnect=True)
