@@ -23,6 +23,7 @@ def list_sources():
     sources =[]
     for x in links:
         sources.append(x)
+    return sources
 
 link = links["Verge"]
 #print(link)
@@ -66,8 +67,16 @@ async def on_message(message):
     if "help(newsbot)" == message.content.lower() or "newsbot.commands()" == message.content.lower():
         await message.channel.send(commandslist)
     
-    elif "newsbot.close()" == message.content.lower:
+    elif "newsbot.close()" == message.content.lower() and str(message.author).lower() == "yatharth#3059":
+        await client.change_presence(status = discord.Status.offline)
+        await message.channel.send(f"Bot shutting down after request by {message.author}")
         await client.close()
         print(f"Bot shutting down\n")
+    
+    elif "newsbot.sources()" == message.content.lower():
+        await message.channel.send(f"The sources are: ")
+        source = list_sources()
+        #for x in source:
+        await message.channel.send(f"``` {source}```    ")
 
 client.run(bot_token, reconnect=True)
